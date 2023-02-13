@@ -1,10 +1,15 @@
 import findElement from "./utils/findElement.js";
 const BASE_URL = "https://63d9f97db28a3148f67c656b.mockapi.io";
-const templateProduct = findElement("#product-template");
-const elCard = findElement(".cards");
+
 const elSelect = findElement("#select");
+const elSearch = findElement("#search");
 
 let products = [];
+
+// render post
+
+const templateProduct = findElement("#product-template");
+const elCard = findElement(".cards");
 
 function renderProduct(array, parent = elCard) {
   parent.textContent = "";
@@ -15,108 +20,88 @@ function renderProduct(array, parent = elCard) {
     const img = findElement(".card-img-top", template);
     const date = findElement(".date", template);
     const category = findElement(".category", template);
+    const description = findElement(".description", template);
     const price = findElement(".price", template);
     const rating = findElement(".rating", template);
+    const ratiCount = findElement(".rating-count", template);
     const ratingFull = findElement(".rating-full", template);
     const ratingHalf = findElement(".rating-half", template);
     const ratingStars = findElement(".rating-stars", template);
 
-    if (product.rating <= 5 && product.rating > 4.5) {
+    // date genered
+
+    const generedDate = new Date(product.createdAt);
+    const resultDate = `${
+      generedDate.getHours() < 10
+        ? "0" + generedDate.getHours()
+        : generedDate.getHours()
+    }:${
+      generedDate.getMinutes() < 10
+        ? "0" + generedDate.getMinutes()
+        : generedDate.getMinutes()
+    } ${
+      generedDate.getDate() < 10
+        ? "0" + generedDate.getDate()
+        : generedDate.getDate()
+    }.${
+      generedDate.getMonth() + 1 < 10
+        ? "0" + (generedDate.getMonth() + 1)
+        : generedDate.getMonth() + 1
+    }.${generedDate.getFullYear()}`;
+
+    //rating function
+
+    if (Math.round(product.rating) === 5) {
       for (let i = 0; i < 5; i++) {
         const img = document.createElement("img");
         img.src = ratingFull.src;
         ratingStars.appendChild(img);
       }
-    } else if (product.rating <= 4.5 && product.rating > 4) {
+    } else if (Math.round(product.rating) === 4) {
       for (let i = 0; i < 4; i++) {
         const img = document.createElement("img");
         img.src = ratingFull.src;
         ratingStars.appendChild(img);
       }
-      const img = document.createElement("img");
-      img.src = ratingHalf.src;
-      ratingStars.appendChild(img);
-    }
-
-    if (product.rating <= 4 && product.rating > 3.5) {
-      for (let i = 0; i < 4; i++) {
-        const img = document.createElement("img");
-        img.src = ratingFull.src;
-        ratingStars.appendChild(img);
-      }
-    } else if (product.rating <= 3.5 && product.rating > 3) {
+    } else if (Math.round(product.rating) === 3) {
       for (let i = 0; i < 3; i++) {
         const img = document.createElement("img");
         img.src = ratingFull.src;
         ratingStars.appendChild(img);
       }
-      const img = document.createElement("img");
-      img.src = ratingHalf.src;
-      ratingStars.appendChild(img);
-    }
-
-    if (product.rating <= 3 && product.rating > 2.5) {
-      for (let i = 0; i < 3; i++) {
-        const img = document.createElement("img");
-        img.src = ratingFull.src;
-        ratingStars.appendChild(img);
-      }
-    } else if (product.rating <= 2.5 && product.rating > 2) {
+    } else if (Math.round(product.rating) === 2) {
       for (let i = 0; i < 2; i++) {
         const img = document.createElement("img");
         img.src = ratingFull.src;
         ratingStars.appendChild(img);
       }
+    } else if (Math.round(product.rating) === 1) {
       const img = document.createElement("img");
-      img.src = ratingHalf.src;
-      ratingStars.appendChild(img);
-    }
-    if (product.rating <= 2 && product.rating > 1.5) {
-      for (let i = 0; i < 2; i++) {
-        const img = document.createElement("img");
-        img.src = ratingFull.src;
-        ratingStars.appendChild(img);
-      }
-    } else if (product.rating <= 1.5 && product.rating > 1) {
-      for (let i = 0; i < 1; i++) {
-        const img = document.createElement("img");
-        img.src = ratingFull.src;
-        ratingStars.appendChild(img);
-      }
-      const img = document.createElement("img");
-      img.src = ratingHalf.src;
-      ratingStars.appendChild(img);
-    }
-    if (product.rating <= 1 && product.rating > 0.5) {
-      for (let i = 0; i < 1; i++) {
-        const img = document.createElement("img");
-        img.src = ratingFull.src;
-        ratingStars.appendChild(img);
-      }
-    } else if (product.rating <= 0.5 && product.rating > 0) {
-      const img = document.createElement("img");
-      img.src = ratingHalf.src;
+      img.src = ratingFull.src;
       ratingStars.appendChild(img);
     }
 
     title.textContent = product.name;
     img.src = product.image;
-    date.textContent = product.createdAt;
+    date.textContent = resultDate;
     category.textContent = product.category;
-    price.textContent = product.price;
+    description.textContent = product.description;
+    price.textContent = product.price + "$";
     rating.textContent = product.rating;
     fragment.appendChild(template);
   });
   parent.appendChild(fragment);
 }
-(async function () {
+
+async function getData() {
   const res = await fetch(BASE_URL + "/products");
 
   let data = await res.json();
   products = data;
   renderProduct(products);
   rederSelect(products, elSelect);
-})();
+}
+getData();
 
 // select function
 
@@ -154,3 +139,40 @@ function rederSelect(productsArr, p) {
   });
 }
 rederSelect(products, elSelect);
+
+import Swiper from "https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.esm.browser.min.js";
+
+const swiper = new Swiper(".swiper", {
+  loop: true,
+
+  // If we need pagination
+  pagination: {
+    el: ".swiper-pagination",
+  },
+
+  // Navigation arrows
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+
+  // And if we need scrollbar
+  scrollbar: {
+    el: ".swiper-scrollbar",
+  },
+});
+
+// search
+
+elSearch.addEventListener("input", (e) => {
+  e.preventDefault();
+
+  let element = e.target;
+  let searchArr = [];
+  for (let i = 0; i < products.length; i++) {
+    if (products[i].name.includes(element.value)) {
+      searchArr.push(products[i]);
+    }
+  }
+  renderProduct(searchArr);
+});

@@ -1,0 +1,28 @@
+@font-face {
+  font-family: "Barlow";
+  src: url("../Barlow-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+body {
+  font-family: "Barlow";
+}
+.card {
+  height: 770px;
+  transition: all 0.3s;
+}
+.card:hover {
+  transform: scale(1.1);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.btns {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
